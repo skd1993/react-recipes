@@ -1,7 +1,7 @@
 exports.typeDefs = `
 
 type Recipe {
-	type: String!
+	name: String!
 	category: String!
 	description: String!
 	instructions: String!
@@ -23,7 +23,13 @@ type Query {
 }
 
 type Mutation {
-	addRecipe(name:String!, description:String!, category:String!, instructions:String!, username:String): Recipe
+	addRecipe(
+		name: String!, 
+		description: String!, 
+		category: String!, 
+		instructions: String!, 
+		username: String
+	): Recipe
 }
 
 `;

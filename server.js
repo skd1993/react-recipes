@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv").config({path: "variables.env"});
 const Recipe = require("./models/Recipe");
 const User = require("./models/User");
@@ -24,6 +25,7 @@ mongoose
 
 const app = express();
 
+// app.use(cors);
 app.use("/graphiql", graphiqlExpress({endpointURL: "/graphql"}));
 app.use("/graphql", bodyParser.json(), graphqlExpress({
 	schema,
