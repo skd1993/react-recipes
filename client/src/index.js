@@ -16,7 +16,27 @@ import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4444/graphql"
+  uri: "http://localhost:4444/graphql",
+  fetchOptions: { //allows to send token to backend
+    credentials: "include"
+  },
+  request: operation => {
+    const token = localStorage.getItem("token");
+    operation.setContext({
+      headers: { // add token to auth header
+        authorization: token
+      }
+    })
+  },
+  onError: ({ networkError }) => {
+    if(networkError) {
+      console.log("Network Error", networkError);
+    }
+    // can use more error codes and perform actions
+    // if(networkError.statusCode === 401) {
+    //   localStorage.removeItem("token");
+    // }
+  }
 });
 
 const Root = () => (

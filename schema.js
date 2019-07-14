@@ -35,6 +35,11 @@ type Mutation {
 		username: String
 	): Recipe
 
+	signinUser(
+		username: String!,
+		password: String!
+	): Token
+
 	signupUser(
 		username: String!,
 		email: String!,

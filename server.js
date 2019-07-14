@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 // const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 const cors = require("cors");
 require("dotenv").config({ path: "variables.env" });
 const Recipe = require("./models/Recipe");
@@ -47,7 +48,22 @@ const server = new ApolloServer({
 
 // app.use(cors(corsOptions));
 
-server.applyMiddleware({ app, cors: corsOptions });
+// apply any middleware before "server.applyMiddleware"
+app.use(async (req, res, next) => {
+  const token = req.headers["authorization"];
+  if(token !== "null") {
+    try {
+      const currentUser = await jwt.verify(token, process.env.SECRET);
+      console.log(currentUser);
+    }
+    catch(err) {
+      console.log("an error has occurred", err);
+    }
+  }
+  next(); // calls next func in middleware chain 
+})
+
+server.applyMiddleware({ app, cors: corsOptions }); 
 
 // app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
 // app.use(

@@ -1,13 +1,20 @@
 import React from "react";
 import { Mutation } from "react-apollo";
 import { SIGNUP_USER } from "../../queries/index";
+import Error from "../Error";
+
+const initialState = {
+  username: "",
+  password: "",
+  email: "",
+  passwordConfirm: ""
+};
 
 class Signup extends React.Component {
-  state = {
-    username: "",
-    password: "",
-    email: "",
-    passwordConfirm: ""
+  state = { ...initialState };
+
+  clearState = () => {
+    this.setState({ ...initialState });
   };
 
   handleChange = event => {
@@ -19,9 +26,17 @@ class Signup extends React.Component {
 
   handleSubmit = (event, signupUser) => {
     event.preventDefault();
-    signupUser().then(data => {
+    signupUser().then(({data}) => {
       console.log(data);
+      localStorage.setItem("token", data.signupUser.token);
+      this.clearState();
     });
+  };
+
+  validateForm = () => {
+    const { username, password, email, passwordConfirm } = this.state;
+    const isInvalid = !username || !email || password !== passwordConfirm;
+    return isInvalid;
   };
 
   render() {
@@ -33,10 +48,7 @@ class Signup extends React.Component {
           mutation={SIGNUP_USER}
           variables={{ username, email, password }}
         >
-          {() => {
-            {
-              signupUser, { data, loading, error };
-            }
+          {(signupUser, { data, loading, error }) => {
             return (
               <form
                 className="form"
@@ -70,9 +82,15 @@ class Signup extends React.Component {
                   onChange={this.handleChange}
                   value={passwordConfirm}
                 />
-                <button type="submit" className="button-primary">
+                <button
+                  type="submit"
+                  className="button-primary"
+                  disabled={loading || this.validateForm()}
+                  // style={this.validateForm() && {backgroundColor: "grey", cursor: "not-allowed"}}
+                >
                   Submit
                 </button>
+                {error && <Error error={error} />}
               </form>
             );
           }}
